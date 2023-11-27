@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/action_people"
+        android:icon="@drawable/people"
+        android:title="친구"/>
+    <item
+        android:id="@+id/action_chat"
+        android:icon="@drawable/chat"
+        android:title="대화"/>
+    <item
+        android:id="@+id/action_account"
+        android:icon="@drawable/account"
+        android:title="계정"/>
+</menu>

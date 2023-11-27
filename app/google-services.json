@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "585354072009",
+    "project_id": "chatty-de9ac",
+    "storage_bucket": "chatty-de9ac.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:585354072009:android:ec8d2eb809f4669599e218",
+        "android_client_info": {
+          "package_name": "com.example.chatty"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDukdDWkX4YrCSYJtQWU33I5lfqBOq5h9g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
