@@ -10,14 +10,14 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_above="@+id/mainactivity_bootomnavigationview"
+        android:layout_above="@+id/mainactivity_bottomnavigationview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"></FrameLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/mainactivity_bootomnavigationview"
+        android:id="@+id/mainactivity_bottomnavigationview"
         android:layout_alignParentBottom="true"
         app:itemBackground="@color/purple_200"
         app:itemIconTint="@android:color/white"

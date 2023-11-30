@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,17 +21,23 @@ import com.bumptech.glide.request.RequestOptions;
 import com.example.chatty.R;
 import com.example.chatty.model.ChatModel;
 import com.example.chatty.model.UserModel;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 public class MessageActivity extends AppCompatActivity {
 
@@ -41,6 +48,8 @@ public class MessageActivity extends AppCompatActivity {
     private String uid;  // 현재 사용자의 UID
     private String chatRoomUid;  // 채팅방의 UID
     private RecyclerView recyclerView;
+
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,55 +65,41 @@ public class MessageActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // 대화 모델 생성
                 ChatModel chatModel = new ChatModel();
-                chatModel.users.put(uid, true);
-                chatModel.users.put(destinatonUid, true);
+                chatModel.users.put(uid,true);
+                chatModel.users.put(destinatonUid,true);
 
-                // 채팅방 UID가 없는 경우
-                if (chatRoomUid == null) {
-                    // 데이터베이스에 새로운 채팅방 생성
-                    FirebaseDatabase.getInstance().getReference().child("chatrooms").push().setValue(chatModel)
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    // 채팅방이 성공적으로 생성된 경우, 다시 채팅방 확인
-                                    checkChatRoom();
-                                }
-                            });
-                } else {
-                    // 채팅방 UID가 있는 경우, 기존 채팅방에 새로운 댓글 추가
+
+
+
+                if(chatRoomUid == null){
+                    button.setEnabled(false);
+                    FirebaseDatabase.getInstance().getReference().child("chatrooms").push().setValue(chatModel).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            checkChatRoom();
+                        }
+                    });
+
+                }else {
+
                     ChatModel.Comment comment = new ChatModel.Comment();
                     comment.uid = uid;
                     comment.message = editText.getText().toString();
+                    comment.timestamp = ServerValue.TIMESTAMP;
+                    FirebaseDatabase.getInstance().getReference().child("chatrooms").child(chatRoomUid).child("comments").push().setValue(comment).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            editText.setText("");
+                        }
+                    });
 
-                    // 데이터베이스에 "comments" 필드가 없으면 생성
-                    FirebaseDatabase.getInstance().getReference()
-                            .child("chatrooms")
-                            .child(chatRoomUid)
-                            .child("comments")
-                            .updateChildren(new HashMap<String, Object>());
-
-                    // 이후에 대화 추가
-                    FirebaseDatabase.getInstance().getReference()
-                            .child("chatrooms")
-                            .child(chatRoomUid)
-                            .child("comments")
-                            .push()
-                            .setValue(comment)
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    // 성공적으로 댓글이 추가되었을 때
-                                    editText.setText(""); // 댓글이 추가된 후 editText를 초기화
-                                }
-                            });
                 }
+
+
             }
         });
-        // 액티비티 생성 시 채팅방 확인
         checkChatRoom();
-
 
     }
     // 채팅방을 확인하는 메소드
@@ -233,6 +228,11 @@ public class MessageActivity extends AppCompatActivity {
 
 
             }
+            long unixTime = (long) comments.get(position).timestamp;
+            Date date = new Date(unixTime);
+            simpleDateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
+            String time = simpleDateFormat.format(date);
+            messageViewHolder.textView_timestamp.setText(time);
 
         }
 
@@ -249,6 +249,7 @@ public class MessageActivity extends AppCompatActivity {
             public ImageView imageView_profile;
             public LinearLayout linearLayout_destination;
             public LinearLayout linearLayout_main;
+            public TextView textView_timestamp;
 
             // MessageViewHolder의 생성자
             public MessageViewHolder(View view) {
@@ -258,7 +259,14 @@ public class MessageActivity extends AppCompatActivity {
                 imageView_profile = view.findViewById(R.id.messageItem_imageview_profile);
                 linearLayout_destination = view.findViewById(R.id.messageItem_linearlayout_destination);
                 linearLayout_main = (LinearLayout)view.findViewById(R.id.messageItem_linearlayout_main);
+                textView_timestamp = (TextView)view.findViewById(R.id.messageItem_textview_timestamp);
             }
         }
+    }
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        finish();
+        overridePendingTransition(R.anim.fromleft,R.anim.toright);
     }
 }

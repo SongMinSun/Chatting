@@ -1,12 +1,17 @@
 package com.example.chatty;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.example.chatty.fragment.peopleFragment;
+import com.example.chatty.fragment.ChatFragment;
+import com.example.chatty.fragment.PeopleFragment;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -15,14 +20,29 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Fragment를 관리하기 위한 FragmentManager 객체 생성
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        // Fragment 트랜잭션 시작
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        BottomNavigationView bottomNavigationView = findViewById(R.id.mainactivity_bottomnavigationview);
 
-        // activity_main.xml 파일에 정의된 FrameLayout에 peopleFragment를 추가 또는 교체
-        fragmentTransaction.replace(R.id.mainactivity_framelayout, new peopleFragment());
-        // 트랜잭션 완료
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.action_people:
+                        replaceFragment(new PeopleFragment());
+                        return true;
+                    case R.id.action_chat:
+                        replaceFragment(new ChatFragment());
+                        return true;
+                }
+
+                return false;
+            }
+        });
+    }
+
+    private void replaceFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.mainactivity_framelayout, fragment);
         fragmentTransaction.commit();
     }
 }
