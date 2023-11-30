@@ -18,6 +18,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.UploadTask;
@@ -68,6 +69,8 @@ public class SignupActivity extends AppCompatActivity {
                                 if (task.isSuccessful()) {
                                     // 사용자 등록 성공
                                     String uid = task.getResult().getUser().getUid();
+                                    UserProfileChangeRequest userProfileChangeRequest = new UserProfileChangeRequest.Builder().setDisplayName(et_name.getText().toString()).build();
+                                    task.getResult().getUser().updateProfile(userProfileChangeRequest);
 
                                     // Firebase Storage에 프로필 이미지 업로드
                                     FirebaseStorage.getInstance().getReference().child("userImages").child(uid).putFile(imageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
