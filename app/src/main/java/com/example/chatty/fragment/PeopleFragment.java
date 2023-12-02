@@ -129,6 +129,9 @@ public class PeopleFragment extends Fragment {
                     }
                 }
             });
+            if(userModels.get(position).comment != null){
+                ((CustomViewHolder) holder).textView_comment.setText(userModels.get(position).comment);
+            }
         }
 
         // 목록의 아이템 개수 반환
@@ -139,14 +142,15 @@ public class PeopleFragment extends Fragment {
 
         // ViewHolder 클래스 정의
         private class CustomViewHolder extends RecyclerView.ViewHolder {
-            ImageView imageView; // 프로필 이미지를 표시하는 이미지 뷰
-            TextView textView; // 사용자 이름을 표시하는 텍스트 뷰
+            public ImageView imageView;
+            public TextView textView;
+            public TextView textView_comment;
 
-            // ViewHolder 생성자
             public CustomViewHolder(View view) {
                 super(view);
-                imageView = view.findViewById(R.id.frienditem_imageview);
-                textView = view.findViewById(R.id.frienditem_textview);
+                imageView = (ImageView) view.findViewById(R.id.frienditem_imageview);
+                textView = (TextView) view.findViewById(R.id.frienditem_textview);
+                textView_comment = (TextView)view.findViewById(R.id.frienditem_textview_comment);
             }
         }
     }

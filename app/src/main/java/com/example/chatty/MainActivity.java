@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.chatty.fragment.AccountFragment;
 import com.example.chatty.fragment.ChatFragment;
 import com.example.chatty.fragment.PeopleFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -39,12 +40,15 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.action_chat:
                         replaceFragment(new ChatFragment());
                         return true;
+                    case R.id.action_account:
+                        replaceFragment(new AccountFragment());
+                        return true;
                 }
 
                 return false;
             }
         });
-        passPushTokenToServer();
+
 
     }
 
