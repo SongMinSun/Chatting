@@ -12,10 +12,10 @@
     <ImageView
         android:id="@+id/login_image"
         android:layout_width="match_parent"
-        android:layout_height="250dp"
+        android:layout_height="218dp"
         android:layout_centerInParent="true"
-        android:src="@drawable/chatting"
-        android:layout_marginTop="30dp"/>
+        android:layout_marginTop="30dp"
+        android:src="@drawable/chatting" />
 
 
     <ImageView
@@ -97,7 +97,8 @@
         android:textColor="@color/white"
         android:textSize="20sp"
         android:backgroundTint="@color/yellow"
-        android:background="@drawable/rounded_button" />
+        android:background="@drawable/rounded_button"
+        android:textStyle="bold"/>
 
     <Button
         android:id="@+id/sign_btn"
@@ -111,6 +112,7 @@
         android:textColor="@color/white"
         android:textSize="20sp"
         android:backgroundTint="#B8B8B8"
-        android:background="@drawable/rounded_button"/>
+        android:background="@drawable/rounded_button"
+        android:textStyle="bold"/>
 
 </LinearLayout>
