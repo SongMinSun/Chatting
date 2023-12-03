@@ -2,7 +2,6 @@ package com.example.chatty.fragment;
 
 import android.app.ActivityOptions;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,10 +15,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.chatty.R;
 import com.example.chatty.model.UserModel;
 import com.example.chatty.chat.MessageActivity;
@@ -27,33 +24,88 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class PeopleFragment extends Fragment {
+
+    private ImageView profileImageView;
+    private TextView profileUsernameTextView;
+    private TextView profileStatusTextView;
+    private TextView friendCountTextView; // 추가된 부분
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragement_people, container, false);
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.peoplefragment_recyclerview);
+
+        // 프로필 섹션을 위한 뷰 초기화
+        profileImageView = view.findViewById(R.id.profile_imageview);
+        profileUsernameTextView = view.findViewById(R.id.profile_username);
+        profileStatusTextView = view.findViewById(R.id.profile_status);
+
+        // 친구 수 표시 텍스트뷰 초기화
+        friendCountTextView = view.findViewById(R.id.friend_count_textview);
+
+        // 리사이클러뷰 설정 및 어댑터 지정
+        RecyclerView recyclerView = view.findViewById(R.id.peoplefragment_recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
         recyclerView.setAdapter(new PeopleFragmentRecyclerViewAdapter());
-        FloatingActionButton floatingActionButton = (FloatingActionButton)view.findViewById(R.id.peoplefragment_floatingButton);
+
+        // 채팅 버튼 클릭 시 이벤트 처리
+        FloatingActionButton floatingActionButton = view.findViewById(R.id.peoplefragment_floatingButton);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(view.getContext(),SelectFriendActivity.class));
+                startActivity(new Intent(view.getContext(), SelectFriendActivity.class));
             }
         });
-        return view;
 
+        // 현재 사용자의 프로필 정보 로드 및 표시
+        loadCurrentUserProfile();
+
+        return view;
     }
+
+    private void loadCurrentUserProfile() {
+        // 현재 사용자의 프로필 정보를 가져와서 표시
+        String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference currentUserRef = FirebaseDatabase.getInstance().getReference().child("users").child(myUid);
+        currentUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    UserModel currentUser = snapshot.getValue(UserModel.class);
+                    if (currentUser != null) {
+                        // Glide 또는 선호하는 이미지 로딩 라이브러리를 사용하여 프로필 이미지 로드
+                        Glide.with(requireContext())
+                                .load(currentUser.profileImageUrl)
+                                .apply(new RequestOptions().circleCrop())
+                                .into(profileImageView);
+
+                        // 사용자명과 상태메시지 표시
+                        profileUsernameTextView.setText(currentUser.userName);
+
+                        // 상태메시지 표시
+                        if (currentUser.comment != null) {
+                            profileStatusTextView.setText(currentUser.comment);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // 오류 처리
+                Log.e("PeopleFragment", "현재 사용자 프로필 로딩 중 오류: " + error.getMessage());
+            }
+        });
+    }
+
 
     class PeopleFragmentRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -68,8 +120,6 @@ public class PeopleFragment extends Fragment {
                     userModels.clear();
 
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-
-
                         UserModel userModel = snapshot.getValue(UserModel.class);
 
                         if (userModel.uid.equals(myUid)) {
@@ -77,24 +127,28 @@ public class PeopleFragment extends Fragment {
                         }
                         userModels.add(userModel);
                     }
-                    notifyDataSetChanged();
 
+                    // 친구 수 표시 텍스트 업데이트
+                    updateFriendCount(userModels.size());
+
+                    notifyDataSetChanged();
                 }
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-
+                    // 오류 처리
+                    Log.e("PeopleFragment", "친구 목록 로딩 중 오류: " + databaseError.getMessage());
                 }
             });
+        }
 
-
+        private void updateFriendCount(int count) {
+            friendCountTextView.setText("친구 수 " + count + "명");
         }
 
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_friend, parent, false);
-
-
             return new CustomViewHolder(view);
         }
 
@@ -103,8 +157,8 @@ public class PeopleFragment extends Fragment {
             Glide.with(holder.itemView.getContext())
                     .load(userModels.get(holder.getAdapterPosition()).profileImageUrl)
                     .apply(new RequestOptions().circleCrop())
-                    .into(((CustomViewHolder)holder).imageView);
-            ((CustomViewHolder)holder).textView.setText(userModels.get(holder.getAdapterPosition()).userName);
+                    .into(((CustomViewHolder) holder).imageView);
+            ((CustomViewHolder) holder).textView.setText(userModels.get(holder.getAdapterPosition()).userName);
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -118,11 +172,11 @@ public class PeopleFragment extends Fragment {
                     }
                 }
             });
-            if(userModels.get(position).comment != null){
+
+            if (userModels.get(position).comment != null) {
                 ((CustomViewHolder) holder).textView_comment.setText(userModels.get(position).comment);
             }
         }
-
 
         @Override
         public int getItemCount() {
@@ -136,9 +190,9 @@ public class PeopleFragment extends Fragment {
 
             public CustomViewHolder(View view) {
                 super(view);
-                imageView = (ImageView) view.findViewById(R.id.frienditem_imageview);
-                textView = (TextView) view.findViewById(R.id.frienditem_textview);
-                textView_comment = (TextView)view.findViewById(R.id.frienditem_textview_comment);
+                imageView = view.findViewById(R.id.frienditem_imageview);
+                textView = view.findViewById(R.id.frienditem_textview);
+                textView_comment = view.findViewById(R.id.frienditem_textview_comment);
             }
         }
     }

@@ -12,12 +12,65 @@
         android:scaleType="centerCrop"
         android:src="@drawable/people_title" />
 
+    <!-- 프로필 이미지뷰 -->
+    <ImageView
+        android:id="@+id/profile_imageview"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:scaleType="centerCrop"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"/>
 
+    <!-- 사용자명 텍스트뷰 -->
+    <TextView
+        android:id="@+id/profile_username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="18dp"/>
+
+    <!-- 프로필 섹션 -->
+
+    <!-- 친구 수 표시 텍스트뷰 -->
+    <LinearLayout
+        android:id="@+id/profile_section"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="10dp">
+
+
+        <!-- 상태메시지 텍스트뷰 -->
+        <TextView
+            android:id="@+id/profile_status"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_weight="1"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/friend_count_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="친구 수: 0"
+        android:textSize="14sp"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="10dp"/>
+
+    <!-- 친구 목록 섹션 -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/peoplefragment_recyclerview"
         android:layout_width="match_parent"
-        android:layout_height="533dp" />
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="4dp"/>
 
+    <!-- 채팅 버튼 -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/peoplefragment_floatingButton"
         android:layout_width="wrap_content"
