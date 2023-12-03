@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.chatty.R;
+import com.example.chatty.chat.GroupMessageActivity;
 import com.example.chatty.chat.MessageActivity;
 import com.example.chatty.model.ChatModel;
 import com.example.chatty.model.UserModel;
@@ -49,8 +50,15 @@ public class SelectFriendActivity extends AppCompatActivity {
                 String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
                 chatModel.users.put(myUid,true);
 
-                FirebaseDatabase.getInstance().getReference().child("chatrooms").push().setValue(chatModel);
+                // chatModel을 사용하여 chatrooms에 데이터를 추가한 후, 생성된 채팅방의 키를 가져옴
+                String chatRoomKey = FirebaseDatabase.getInstance().getReference().child("chatrooms").push().getKey();
+                FirebaseDatabase.getInstance().getReference().child("chatrooms").child(chatRoomKey).setValue(chatModel);
 
+                // GroupMessageActivity로 이동
+                Intent intent = new Intent(SelectFriendActivity.this, GroupMessageActivity.class);
+                intent.putExtra("destinationRoom", chatRoomKey);
+                finish();
+                startActivity(intent);
 
             }
         });
