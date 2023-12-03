@@ -21,6 +21,7 @@ import com.example.chatty.chat.GroupMessageActivity;
 import com.example.chatty.chat.MessageActivity;
 import com.example.chatty.model.ChatModel;
 import com.example.chatty.model.UserModel;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -47,6 +48,15 @@ public class ChatFragment extends Fragment {
         RecyclerView recyclerView = view.findViewById(R.id.chatfragment_recyclerview);
         recyclerView.setAdapter(new ChatRecyclerViewAdapter());
         recyclerView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
+
+        // 채팅 버튼 클릭 시 이벤트 처리
+        FloatingActionButton floatingActionButton = view.findViewById(R.id.chatfragment_floatingButton2); // 수정된 부분
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(view.getContext(), SelectFriendActivity.class));
+            }
+        });
         return view;
     }
 

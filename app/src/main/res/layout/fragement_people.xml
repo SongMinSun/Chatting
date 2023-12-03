@@ -70,7 +70,7 @@
         android:layout_weight="1"
         android:layout_marginTop="4dp"/>
 
-    <!-- 채팅 버튼 -->
+    <!-- 친구추가 버튼 -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/peoplefragment_floatingButton"
         android:layout_width="wrap_content"
@@ -83,7 +83,6 @@
         android:layout_marginBottom="20dp"
         android:layout_gravity="right"
         android:backgroundTint="@color/blue"
-        android:src="@android:drawable/stat_notify_chat"
-        app:fabSize="normal"
+        app:srcCompat="@drawable/plus_people"         app:fabSize="normal"
         tools:ignore="SpeakableTextPresentCheck" />
 </LinearLayout>
