@@ -89,11 +89,7 @@ public class PeopleFragment extends Fragment {
 
                         // 사용자명과 상태메시지 표시
                         profileUsernameTextView.setText(currentUser.userName);
-
-                        // 상태메시지 표시
-                        if (currentUser.comment != null) {
-                            profileStatusTextView.setText(currentUser.comment);
-                        }
+                        profileStatusTextView.setText(currentUser.comment);
                     }
                 }
             }
@@ -105,7 +101,6 @@ public class PeopleFragment extends Fragment {
             }
         });
     }
-
 
     class PeopleFragmentRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
