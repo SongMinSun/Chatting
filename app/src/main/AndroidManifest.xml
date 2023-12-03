@@ -57,15 +57,8 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-        <service
-            android:name=".MyFirebaseMessagingService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
-            </intent-filter>
+        <activity android:name=".fragment.SelectFriendActivity" />
+        <activity android:name=".chat.GroupMessageActivity"/>
 
-        </service>
     </application>
-
-
 </manifest>

@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.chatty.R;
+import com.example.chatty.chat.GroupMessageActivity;
 import com.example.chatty.chat.MessageActivity;
 import com.example.chatty.model.ChatModel;
 import com.example.chatty.model.UserModel;
@@ -43,38 +44,38 @@ public class ChatFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chat, container, false);
-
         RecyclerView recyclerView = view.findViewById(R.id.chatfragment_recyclerview);
         recyclerView.setAdapter(new ChatRecyclerViewAdapter());
         recyclerView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
-
         return view;
     }
 
     class ChatRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
         private List<ChatModel> chatModels = new ArrayList<>();
+        private List<String> keys = new ArrayList<>();
         private String uid;
         private ArrayList<String> destinationUsers = new ArrayList<>();
 
         public ChatRecyclerViewAdapter() {
             uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-            FirebaseDatabase.getInstance().getReference().child("chatrooms").orderByChild("users/" + uid).equalTo(true).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    chatModels.clear();
-                    for (DataSnapshot item : dataSnapshot.getChildren()) {
-                        chatModels.add(item.getValue(ChatModel.class));
-                    }
-                    notifyDataSetChanged();
-                }
+            FirebaseDatabase.getInstance().getReference().child("chatrooms").orderByChild("users/" + uid)
+                    .equalTo(true).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            chatModels.clear();
+                            for (DataSnapshot item : dataSnapshot.getChildren()) {
+                                chatModels.add(item.getValue(ChatModel.class));
+                                keys.add(item.getKey());
+                            }
+                            notifyDataSetChanged();
+                        }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
 
-                }
-            });
+                        }
+                    });
         }
 
         @Override
@@ -95,39 +96,54 @@ public class ChatFragment extends Fragment {
                 }
             }
 
-            FirebaseDatabase.getInstance().getReference().child("users").child(destinationUid).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    UserModel userModel = dataSnapshot.getValue(UserModel.class);
-                    Glide.with(customViewHolder.itemView.getContext())
-                            .load(userModel.profileImageUrl)
-                            .apply(new RequestOptions().circleCrop())
-                            .into(customViewHolder.imageView);
+            if (destinationUid != null) {
+                FirebaseDatabase.getInstance().getReference().child("users").child(destinationUid).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        UserModel userModel = dataSnapshot.getValue(UserModel.class);
+                        if (userModel != null) {
+                            Glide.with(customViewHolder.itemView.getContext())
+                                    .load(userModel.profileImageUrl)
+                                    .apply(new RequestOptions().circleCrop())
+                                    .into(customViewHolder.imageView);
 
-                    customViewHolder.textView_title.setText(userModel.userName);
-                }
+                            customViewHolder.textView_title.setText(userModel.userName);
+                        }
+                    }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
 
-                }
-            });
+                    }
+                });
+            }
 
             Map<String, ChatModel.Comment> commentMap = new TreeMap<>(Collections.reverseOrder());
             commentMap.putAll(chatModels.get(position).comments);
+            if (commentMap.keySet().toArray().length > 0) {
+                String lastMessageKey = (String) commentMap.keySet().toArray()[0];
+                customViewHolder.textView_last_message.setText(chatModels.get(position).comments.get(lastMessageKey).message);
 
-            String lastMessageKey = "";
-            if (!commentMap.isEmpty()) {
-                lastMessageKey = (String) commentMap.keySet().toArray()[0];
+                simpleDateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
+                long unixTime = (long) chatModels.get(position).comments.get(lastMessageKey).timestamp;
+                Date date = new Date(unixTime);
+                customViewHolder.textView_timestamp.setText(simpleDateFormat.format(date));
             }
-
-            customViewHolder.textView_last_message.setText(lastMessageKey.isEmpty() ? "" : chatModels.get(position).comments.get(lastMessageKey).message);
 
             customViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(view.getContext(), MessageActivity.class);
-                    intent.putExtra("destinationUid", destinationUsers.get(customViewHolder.getAdapterPosition()));
+                    Intent intent = null;
+                    int adapterPosition = customViewHolder.getAdapterPosition();
+
+                    if (chatModels.get(adapterPosition).users.size() > 2) {
+                        intent = new Intent(view.getContext(), GroupMessageActivity.class);
+                        intent.putExtra("destinationRoom",keys.get(position));
+                    } else {
+                        intent = new Intent(view.getContext(), MessageActivity.class);
+                        intent.putExtra("destinationUid", destinationUsers.get(adapterPosition));
+                        intent.putExtra("destinationUid",destinationUsers.get(position));
+                    }
 
                     ActivityOptions activityOptions = null;
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
@@ -136,11 +152,6 @@ public class ChatFragment extends Fragment {
                     }
                 }
             });
-
-            simpleDateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
-            long unixTime = (long) chatModels.get(position).comments.get(lastMessageKey).timestamp;
-            Date date = new Date(unixTime);
-            customViewHolder.textView_timestamp.setText(simpleDateFormat.format(date));
         }
 
         @Override
