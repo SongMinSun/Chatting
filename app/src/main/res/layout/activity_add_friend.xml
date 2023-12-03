@@ -6,13 +6,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    >
+    android:background="@color/white">
 
-    <TextView
+    <ImageView
         android:id="@+id/addfriendtext"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="친구추가" />
+        android:layout_width="match_parent"
+        android:layout_height="58dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/add_friend" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="185dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/add_friend_text" />
+
 
     <EditText
         android:id="@+id/editFriendEmail"
@@ -21,29 +29,31 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginBottom="50dp"
         android:ems="10"
-        android:hint="이메일 검색"
+        android:hint="이메일을 입력해주세요."
+        android:layout_gravity="center"
         android:inputType="textEmailAddress"
-        android:textColorHint="@color/color_button_next"
-        app:backgroundTint="@color/color_button_next"
+        android:textColorHint="#979797"
+        app:backgroundTint="#535353"
         android:textSize="24sp"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
 
+
     <Button
         android:id="@+id/addFriend"
-        android:layout_width="wrap_content"
+        android:layout_width="236dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:background="@color/color_button_next"
+        android:layout_gravity="center"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:text="친구 추가하기"
         android:onClick="addFriend"
-        android:textSize="18dp"
-        android:textStyle="bold"
-        android:text="추가"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:backgroundTint="@color/blue"
+        android:background="@drawable/rounded_button"
+        android:textStyle="bold"/>
 </LinearLayout>
