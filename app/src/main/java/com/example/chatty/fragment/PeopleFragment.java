@@ -17,7 +17,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.example.chatty.AddFriendActivity;
 import com.example.chatty.R;
+import com.example.chatty.chat.GroupMessageActivity;
 import com.example.chatty.model.UserModel;
 import com.example.chatty.chat.MessageActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -61,7 +63,7 @@ public class PeopleFragment extends Fragment {
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(view.getContext(), SelectFriendActivity.class));
+                startActivity(new Intent(view.getContext(), AddFriendActivity.class));
             }
         });
 
@@ -114,30 +116,47 @@ public class PeopleFragment extends Fragment {
         public PeopleFragmentRecyclerViewAdapter() {
             userModels = new ArrayList<>();
             final String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-            FirebaseDatabase.getInstance().getReference().child("users").addValueEventListener(new ValueEventListener() {
+
+            // 현재 사용자의 친구 목록을 가져와서 데이터베이스에서 해당 사용자들의 정보만 필터링하여 가져오기
+            DatabaseReference currentUserFriendsRef = FirebaseDatabase.getInstance().getReference().child("users").child(myUid).child("friends");
+            currentUserFriendsRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     userModels.clear();
 
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        UserModel userModel = snapshot.getValue(UserModel.class);
+                    for (DataSnapshot friendSnapshot : dataSnapshot.getChildren()) {
+                        String friendUid = friendSnapshot.getValue(String.class);
 
-                        if (userModel.uid.equals(myUid)) {
-                            continue;
-                        }
-                        userModels.add(userModel);
+                        // 해당 친구의 사용자 정보를 가져와서 리스트에 추가
+                        DatabaseReference friendUserRef = FirebaseDatabase.getInstance().getReference().child("users").child(friendUid);
+                        friendUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot snapshot) {
+                                if (snapshot.exists()) {
+                                    UserModel friendUser = snapshot.getValue(UserModel.class);
+                                    if (friendUser != null) {
+                                        userModels.add(friendUser);
+                                    }
+
+                                    // 업데이트
+                                    updateFriendCount(userModels.size());
+                                    notifyDataSetChanged();
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                // 오류 처리
+                                Log.e("PeopleFragment", "친구 목록 로딩 중 오류: " + databaseError.getMessage());
+                            }
+                        });
                     }
-
-                    // 친구 수 표시 텍스트 업데이트
-                    updateFriendCount(userModels.size());
-
-                    notifyDataSetChanged();
                 }
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
                     // 오류 처리
-                    Log.e("PeopleFragment", "친구 목록 로딩 중 오류: " + databaseError.getMessage());
+                    Log.e("PeopleFragment", "현재 사용자의 친구 목록 로딩 중 오류: " + databaseError.getMessage());
                 }
             });
         }

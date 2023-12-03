@@ -59,6 +59,7 @@
         </activity>
         <activity android:name=".fragment.SelectFriendActivity" />
         <activity android:name=".chat.GroupMessageActivity"/>
+        <activity android:name=".AddFriendActivity"/>
 
     </application>
 </manifest>

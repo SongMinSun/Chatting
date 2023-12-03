@@ -83,6 +83,7 @@
         android:layout_marginBottom="20dp"
         android:layout_gravity="right"
         android:backgroundTint="@color/blue"
-        app:srcCompat="@drawable/plus_people"         app:fabSize="normal"
+        app:srcCompat="@drawable/plus_people"
+        app:fabSize="normal"
         tools:ignore="SpeakableTextPresentCheck" />
 </LinearLayout>
