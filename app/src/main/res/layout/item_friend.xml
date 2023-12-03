@@ -23,14 +23,20 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="10dp"
+            android:textColor="#686868"
+            android:textSize="20dp"
+            android:textStyle="bold"
             android:text="아이디" />
+
         <LinearLayout
             android:gravity="center|right"
+            android:layout_marginEnd="20dp"
             android:layout_width="match_parent"
+
             android:layout_height="match_parent">
             <LinearLayout
                 android:layout_marginRight="10dp"
-                android:background="@android:color/darker_gray"
+                android:background="#F9F9F9"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
                 <TextView
@@ -38,7 +44,9 @@
                     android:id="@+id/frienditem_textview_comment"
                     android:text="상태메세지"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

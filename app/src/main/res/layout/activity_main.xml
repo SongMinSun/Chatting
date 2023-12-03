@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/mainactivity_bottomnavigationview"
         android:layout_alignParentBottom="true"
-        app:itemBackground="@color/purple_200"
+        app:itemBackground="@color/yellow"
         app:itemIconTint="@android:color/white"
         app:menu="@menu/bottom_navigation_main">
     </com.google.android.material.bottomnavigation.BottomNavigationView>

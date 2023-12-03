@@ -1,12 +1,19 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <Button
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="58dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/account_title" />
+
+    <Button
         android:text="현재 상태 메세지"
         android:id="@+id/accountFragment_button_comment"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true" />
 
-</LinearLayout>
+</RelativeLayout>
