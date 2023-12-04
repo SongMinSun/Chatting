@@ -21,14 +21,14 @@
 
         <TextView
             android:id="@+id/chatitem_textview_title"
-            android:layout_width="wrap_content"
+            android:layout_width="120dp"
             android:layout_height="wrap_content"
-            android:textColor="#686868"
-            android:textSize="20dp"
+            android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
             android:text="방 이름"
-            android:layout_marginStart="10dp"
-            android:textStyle="bold"/>
+            android:textColor="#686868"
+            android:textSize="20dp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/chatitem_textview_lastMessage"

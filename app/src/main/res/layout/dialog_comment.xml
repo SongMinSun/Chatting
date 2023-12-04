@@ -8,11 +8,12 @@
         android:background="#FFFFBB33"
         android:layout_width="match_parent"
         android:layout_height="64dp" />
+
     <EditText
         android:id="@+id/commentDialog_edittext"
-        android:hint="상태 메세지를 입력하세요"
-        android:layout_margin="4dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="69dp"
+        android:layout_margin="4dp"
+        android:hint="수정할 내용을 입력해주세요." />
 
 </LinearLayout>

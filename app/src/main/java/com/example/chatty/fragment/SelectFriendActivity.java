@@ -32,23 +32,23 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class SelectFriendActivity extends AppCompatActivity {
     ChatModel chatModel = new ChatModel();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_friend);
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.selectFriendActivity_recyclerview);
+        RecyclerView recyclerView = findViewById(R.id.selectFriendActivity_recyclerview);
         recyclerView.setAdapter(new SelectFriendRecyclerViewAdapter());
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        Button button = (Button) findViewById(R.id.selectFriendActivity_button);
+        Button button = findViewById(R.id.selectFriendActivity_button);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                chatModel.users.put(myUid,true);
+                chatModel.users.put(myUid, true);
 
                 // chatModel을 사용하여 chatrooms에 데이터를 추가한 후, 생성된 채팅방의 키를 가져옴
                 String chatRoomKey = FirebaseDatabase.getInstance().getReference().child("chatrooms").push().getKey();
@@ -59,52 +59,56 @@ public class SelectFriendActivity extends AppCompatActivity {
                 intent.putExtra("destinationRoom", chatRoomKey);
                 finish();
                 startActivity(intent);
-
             }
         });
     }
 
-
     class SelectFriendRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
         List<UserModel> userModels;
 
         public SelectFriendRecyclerViewAdapter() {
             userModels = new ArrayList<>();
             final String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-            FirebaseDatabase.getInstance().getReference().child("users").addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    userModels.clear();
+            FirebaseDatabase.getInstance().getReference().child("users").child(myUid).child("friends")
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            userModels.clear();
 
-                    for(DataSnapshot snapshot :dataSnapshot.getChildren()){
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                String friendUid = snapshot.getValue(String.class);
 
+                                FirebaseDatabase.getInstance().getReference().child("users").child(friendUid)
+                                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                                if (dataSnapshot.exists()) {
+                                                    UserModel friendModel = dataSnapshot.getValue(UserModel.class);
+                                                    if (friendModel != null) {
+                                                        userModels.add(friendModel);
+                                                        notifyDataSetChanged();
+                                                    }
+                                                }
+                                            }
 
-                        UserModel userModel = snapshot.getValue(UserModel.class);
-
-                        if(userModel.uid.equals(myUid)){
-                            continue;
+                                            @Override
+                                            public void onCancelled(DatabaseError databaseError) {
+                                                // 에러 처리 로직 추가
+                                            }
+                                        });
+                            }
                         }
-                        userModels.add(userModel);
-                    }
-                    notifyDataSetChanged();
 
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-
-
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            // 에러 처리 로직 추가
+                        }
+                    });
         }
 
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_friend_select,parent,false);
-
-
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_friend_select, parent, false);
             return new CustomViewHolder(view);
         }
 
@@ -114,12 +118,13 @@ public class SelectFriendActivity extends AppCompatActivity {
                     .load(userModels.get(position).profileImageUrl)
                     .apply(new RequestOptions().circleCrop())
                     .into(((CustomViewHolder) holder).imageView);
+
             ((CustomViewHolder) holder).textView.setText(userModels.get(position).userName);
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    int adapterPosition = holder.getAdapterPosition(); // 동적으로 위치를 가져옴
+                    int adapterPosition = holder.getAdapterPosition();
                     if (adapterPosition != RecyclerView.NO_POSITION) {
                         Intent intent = new Intent(view.getContext(), MessageActivity.class);
                         intent.putExtra("destinationUid", userModels.get(adapterPosition).uid);
@@ -139,15 +144,13 @@ public class SelectFriendActivity extends AppCompatActivity {
             ((CustomViewHolder) holder).checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    // 체크 된 상태
                     if (b) {
-                        int adapterPosition = holder.getAdapterPosition(); // 동적으로 위치를 가져옴
+                        int adapterPosition = holder.getAdapterPosition();
                         if (adapterPosition != RecyclerView.NO_POSITION) {
                             chatModel.users.put(userModels.get(adapterPosition).uid, true);
                         }
-                        // 체크 취소 상태
                     } else {
-                        int adapterPosition = holder.getAdapterPosition(); // 동적으로 위치를 가져옴
+                        int adapterPosition = holder.getAdapterPosition();
                         if (adapterPosition != RecyclerView.NO_POSITION) {
                             chatModel.users.remove(userModels.get(adapterPosition).uid);
                         }
@@ -155,7 +158,6 @@ public class SelectFriendActivity extends AppCompatActivity {
                 }
             });
         }
-
 
         @Override
         public int getItemCount() {
@@ -170,10 +172,10 @@ public class SelectFriendActivity extends AppCompatActivity {
 
             public CustomViewHolder(View view) {
                 super(view);
-                imageView = (ImageView) view.findViewById(R.id.frienditem_imageview);
-                textView = (TextView) view.findViewById(R.id.frienditem_textview);
-                textView_comment = (TextView)view.findViewById(R.id.frienditem_textview_comment);
-                checkBox = (CheckBox)view.findViewById(R.id.friendItem_checkbox);
+                imageView = view.findViewById(R.id.frienditem_imageview);
+                textView = view.findViewById(R.id.frienditem_textview);
+                textView_comment = view.findViewById(R.id.frienditem_textview_comment);
+                checkBox = view.findViewById(R.id.friendItem_checkbox);
             }
         }
     }

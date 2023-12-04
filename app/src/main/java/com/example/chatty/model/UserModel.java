@@ -9,6 +9,7 @@ public class UserModel {
     public String comment;
     public String email;
 
+
     public List<String> friends;
 
     public UserModel() {

@@ -132,6 +132,25 @@ public class ChatFragment extends Fragment {
         private ArrayList<String> destinationUsers = new ArrayList<>();
         private Map<String, Integer> unreadCountMap = new HashMap<>();
 
+        private void setDefaultTitle(CustomViewHolder customViewHolder, int position) {
+            String destinationUid = destinationUsers.get(position);
+            FirebaseDatabase.getInstance().getReference().child("users").child(destinationUid)
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            UserModel userModel = dataSnapshot.getValue(UserModel.class);
+                            if (userModel != null) {
+                                customViewHolder.textView_title.setText(userModel.userName);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            // 에러 처리
+                        }
+                    });
+        }
+
         public ChatRecyclerViewAdapter() {
             uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
@@ -205,6 +224,29 @@ public class ChatFragment extends Fragment {
             } else {
                 customViewHolder.textView_unread_count.setVisibility(View.GONE);
             }
+            // 단체 채팅방 이름 변경을 위한 코드
+            String chatroomKey = keys.get(position);
+            FirebaseDatabase.getInstance().getReference().child("chatrooms").child(chatroomKey).child("roomTitle")
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                String roomTitle = dataSnapshot.getValue(String.class);
+                                // 방 이름을 UI에 업데이트
+                                customViewHolder.textView_title.setText(roomTitle);
+                            } else {
+                                // 방 이름이 없으면 기본적으로 사용자 이름 표시
+                                setDefaultTitle(customViewHolder, position);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            // 에러 처리
+                            setDefaultTitle(customViewHolder, position);
+                        }
+                    });
+
 
             Map<String, ChatModel.Comment> commentMap = new TreeMap<>(Collections.reverseOrder());
             commentMap.putAll(chatModels.get(position).comments);
