@@ -4,19 +4,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
     tools:context="com.example.chatty.chat.MessageActivity">
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="58dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/back_title"
+        android:id="@+id/back_chat"/>
+
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/messageActivity_reclclerview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/messageActivity_reclclerview"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"></androidx.recyclerview.widget.RecyclerView>
-
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="1dp"
+        android:layout_marginLeft="1dp"
+        android:layout_marginTop="103dp"
+        android:layout_marginEnd="-1dp"
+        android:layout_marginRight="-1dp"></androidx.recyclerview.widget.RecyclerView>
 
     <View
         android:id="@+id/lineAboveEditText"
@@ -39,6 +49,7 @@
         android:layout_toLeftOf="@+id/messageActivity_button"
         android:hint="메시지를 입력하세요."
         tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
     <Button
         android:id="@+id/messageActivity_button"
         android:layout_width="wrap_content"

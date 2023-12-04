@@ -65,6 +65,8 @@
         <activity android:name=".chat.GroupMessageActivity"/>
         <activity android:name=".MainContentActivity" />
         <activity android:name=".AddFriendActivity"/>
+        <activity android:name=".fragment.ChatFragment" />
+
 
     </application>
 </manifest>

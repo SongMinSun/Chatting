@@ -1,5 +1,6 @@
 package com.example.chatty.chat;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -18,7 +19,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.example.chatty.MainActivity;
 import com.example.chatty.R;
+import com.example.chatty.fragment.ChatFragment;
 import com.example.chatty.model.ChatModel;
 import com.example.chatty.model.UserModel;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -44,6 +47,7 @@ public class GroupMessageActivity extends AppCompatActivity {
     String destinationRoom;
     String uid;
     EditText editText;
+    private ImageView back_chat;
 
     private UserModel destinationUserModel;
     private DatabaseReference databaseReference;
@@ -62,6 +66,20 @@ public class GroupMessageActivity extends AppCompatActivity {
         destinationRoom = getIntent().getStringExtra("destinationRoom");
         uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         editText = findViewById(R.id.groupMessageActivity_editText);
+        back_chat = findViewById(R.id.back_chat);
+        back_chat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // back_chat를 클릭했을 때의 이벤트를 처리합니다.
+                Intent intent = new Intent(GroupMessageActivity.this, MainActivity.class);
+                intent.putExtra("openChatFragment", true);
+                startActivity(intent);
+
+                // 현재 액티비티를 종료하여 이전 액티비티로 돌아갈 수 있습니다.
+                finish();
+            }
+        });
+
         FirebaseDatabase.getInstance().getReference().child("users").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

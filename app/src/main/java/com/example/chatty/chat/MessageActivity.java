@@ -1,5 +1,6 @@
 package com.example.chatty.chat;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.example.chatty.MainActivity;
 import com.example.chatty.R;
 import com.example.chatty.model.ChatModel;
 import com.example.chatty.model.UserModel;
@@ -46,6 +48,8 @@ public class MessageActivity extends AppCompatActivity {
     private String destinatonUid;
     private Button button;
     private EditText editText;
+    private ImageView back_chat;
+
 
     private String uid;
     private String chatRoomUid;
@@ -67,6 +71,20 @@ public class MessageActivity extends AppCompatActivity {
         editText = (EditText) findViewById(R.id.messageActivity_editText);
 
         recyclerView = (RecyclerView)findViewById(R.id.messageActivity_reclclerview);
+
+        back_chat = findViewById(R.id.back_chat);
+        back_chat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // back_chat를 클릭했을 때의 이벤트를 처리합니다.
+                Intent intent = new Intent(MessageActivity.this, MainActivity.class);
+                intent.putExtra("openChatFragment", true);
+                startActivity(intent);
+
+                // 현재 액티비티를 종료하여 이전 액티비티로 돌아갈 수 있습니다.
+                finish();
+            }
+        });
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

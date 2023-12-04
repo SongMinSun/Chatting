@@ -51,6 +51,8 @@ public class ChatFragment extends Fragment {
 
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd hh:mm");
 
+
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -117,8 +119,11 @@ public class ChatFragment extends Fragment {
                 startActivity(new Intent(view.getContext(), SelectFriendActivity.class));
             }
         });
+
         return view;
+
     }
+
 
     class ChatRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private List<ChatModel> chatModels = new ArrayList<>();
@@ -219,22 +224,27 @@ public class ChatFragment extends Fragment {
                     Intent intent = null;
                     int adapterPosition = customViewHolder.getAdapterPosition();
 
-                    if (chatModels.get(adapterPosition).users.size() > 2) {
-                        intent = new Intent(view.getContext(), GroupMessageActivity.class);
-                        intent.putExtra("destinationRoom", keys.get(position));
-                    } else {
-                        intent = new Intent(view.getContext(), MessageActivity.class);
-                        intent.putExtra("destinationUid", destinationUsers.get(adapterPosition));
-                        intent.putExtra("destinationUid", destinationUsers.get(position));
-                    }
+                    if (adapterPosition != RecyclerView.NO_POSITION) {
+                        String destinationUid = destinationUsers.get(adapterPosition);
 
-                    ActivityOptions activityOptions = null;
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                        activityOptions = ActivityOptions.makeCustomAnimation(view.getContext(), R.anim.fromright, R.anim.toleft);
-                        startActivity(intent, activityOptions.toBundle());
+                        if (chatModels.get(adapterPosition).users.size() > 2) {
+                            intent = new Intent(view.getContext(), GroupMessageActivity.class);
+                            intent.putExtra("destinationRoom", keys.get(adapterPosition));
+                        } else {
+                            intent = new Intent(view.getContext(), MessageActivity.class);
+                            intent.putExtra("destinationUid", destinationUid);
+                        }
+
+                        ActivityOptions activityOptions = null;
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                            activityOptions = ActivityOptions.makeCustomAnimation(view.getContext(), R.anim.fromright, R.anim.toleft);
+                            startActivity(intent, activityOptions.toBundle());
+                            requireActivity().finish();
+                        }
                     }
                 }
             });
+
         }
 
         public void deleteChatRoom(int position) {
@@ -317,5 +327,6 @@ public class ChatFragment extends Fragment {
                         }
                     });
         }
+
     }
 }

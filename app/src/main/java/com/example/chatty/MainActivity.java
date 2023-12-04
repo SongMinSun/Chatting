@@ -26,16 +26,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // 로그인 여부 확인
-        if (isUserLoggedIn()) {
-            // 이미 로그인되어 있다면 채팅 화면으로 전환
-            replaceFragment(new PeopleFragment());
+        boolean openChatFragment = getIntent().getBooleanExtra("openChatFragment", false);
+
+        if (openChatFragment) {
+            // ChatFragment로 교체
+            replaceFragment(new ChatFragment());
         } else {
-            // 로그인되어 있지 않다면 로그인 화면으로 전환
-            // (여기에 로그인 화면으로 전환하는 코드를 추가하세요)
-            Intent loginIntent = new Intent(this, LoginActivity.class);
-            startActivity(loginIntent);
-            finish(); // 로그인 화면으로 전환 후 현재 액티비티를 종료
+            if (isUserLoggedIn()) {
+                replaceFragment(new PeopleFragment());
+            } else {
+                Intent loginIntent = new Intent(this, LoginActivity.class);
+                startActivity(loginIntent);
+                finish();
+            }
         }
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.mainactivity_bottomnavigationview);
@@ -59,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
 
     private boolean isUserLoggedIn() {
         // Firebase Authentication을 사용하는 경우 현재 로그인된 사용자가 있는지 확인
