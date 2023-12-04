@@ -41,6 +41,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
@@ -55,6 +56,7 @@ public class ChatFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chat, container, false);
         RecyclerView recyclerView = view.findViewById(R.id.chatfragment_recyclerview);
+
 
         // Set layout manager
         recyclerView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
@@ -123,6 +125,7 @@ public class ChatFragment extends Fragment {
         private List<String> keys = new ArrayList<>();
         private String uid;
         private ArrayList<String> destinationUsers = new ArrayList<>();
+        private Map<String, Integer> unreadCountMap = new HashMap<>();
 
         public ChatRecyclerViewAdapter() {
             uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -135,6 +138,9 @@ public class ChatFragment extends Fragment {
                             for (DataSnapshot item : dataSnapshot.getChildren()) {
                                 chatModels.add(item.getValue(ChatModel.class));
                                 keys.add(item.getKey());
+
+                                // 읽지 않은 메시지 수 계산 및 업데이트
+                                calculateUnreadMessages(item.getKey());
                             }
                             notifyDataSetChanged();
                         }
@@ -185,6 +191,14 @@ public class ChatFragment extends Fragment {
 
                     }
                 });
+            }
+            // 읽지 않은 메시지가 있는지 확인
+            if (unreadCountMap.containsKey(keys.get(position))) {
+                int unreadCount = unreadCountMap.get(keys.get(position));
+                customViewHolder.textView_unread_count.setVisibility(unreadCount > 0 ? View.VISIBLE : View.GONE);
+                customViewHolder.textView_unread_count.setText(String.valueOf(unreadCount));
+            } else {
+                customViewHolder.textView_unread_count.setVisibility(View.GONE);
             }
 
             Map<String, ChatModel.Comment> commentMap = new TreeMap<>(Collections.reverseOrder());
@@ -267,6 +281,7 @@ public class ChatFragment extends Fragment {
             public TextView textView_title;
             public TextView textView_last_message;
             public TextView textView_timestamp;
+            public TextView textView_unread_count;
 
             public CustomViewHolder(View view) {
                 super(view);
@@ -274,7 +289,33 @@ public class ChatFragment extends Fragment {
                 textView_title = view.findViewById(R.id.chatitem_textview_title);
                 textView_last_message = view.findViewById(R.id.chatitem_textview_lastMessage);
                 textView_timestamp = view.findViewById(R.id.chatitem_textview_timestamp);
+                textView_unread_count = view.findViewById(R.id.chatitem_textview_unread_count);
             }
+
+
+        }
+        private void calculateUnreadMessages(String chatroomKey) {
+            FirebaseDatabase.getInstance().getReference().child("chatrooms").child(chatroomKey).child("comments")
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            int unreadCount = 0;
+                            for (DataSnapshot commentSnapshot : dataSnapshot.getChildren()) {
+                                ChatModel.Comment comment = commentSnapshot.getValue(ChatModel.Comment.class);
+                                if (comment != null && !comment.readUsers.containsKey(uid)) {
+                                    unreadCount++;
+                                }
+                            }
+
+                            unreadCountMap.put(chatroomKey, unreadCount);
+                            notifyDataSetChanged(); // 업데이트 후 RecyclerView 갱신
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            // 에러 처리
+                        }
+                    });
         }
     }
 }
