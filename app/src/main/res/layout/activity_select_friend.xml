@@ -16,9 +16,29 @@
 
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="190dp"
+        android:layout_height="161dp"
         android:scaleType="centerCrop"
         android:src="@drawable/choose" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="채팅방 이름"
+            android:textColor="@color/black"
+            android:textSize="20dp"/>
+
+        <EditText
+            android:id="@+id/roomname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:hint="채팅방 이름을 입력하세요"
+            tools:ignore="TouchTargetSizeCheck" />
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/selectFriendActivity_recyclerview"

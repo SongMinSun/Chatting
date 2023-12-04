@@ -184,7 +184,6 @@ public class ChatFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, @SuppressLint("RecyclerView") final int position) {
-
             final CustomViewHolder customViewHolder = (CustomViewHolder) holder;
             String destinationUid = null;
 
@@ -201,10 +200,20 @@ public class ChatFragment extends Fragment {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         UserModel userModel = dataSnapshot.getValue(UserModel.class);
                         if (userModel != null) {
-                            Glide.with(customViewHolder.itemView.getContext())
-                                    .load(userModel.profileImageUrl)
-                                    .apply(new RequestOptions().circleCrop())
-                                    .into(customViewHolder.imageView);
+                            // 그룹 채팅방인 경우 그룹 프로필 이미지로 설정
+                            // 그룹 채팅방인 경우 그룹 프로필 이미지로 설정
+                            if (chatModels.get(position).users.size() > 2) {
+                                Glide.with(customViewHolder.itemView.getContext())
+                                        .load(R.drawable.group_profile) // 그룹 채팅방 이미지 리소스
+                                        .apply(new RequestOptions().circleCrop())
+                                        .into(customViewHolder.imageView);
+                            } else {
+                                // 1:1 채팅방인 경우 상대방 프로필 이미지로 설정
+                                Glide.with(customViewHolder.itemView.getContext())
+                                        .load(userModel.profileImageUrl)
+                                        .apply(new RequestOptions().circleCrop())
+                                        .into(customViewHolder.imageView);
+                            }
 
                             customViewHolder.textView_title.setText(userModel.userName);
                         }
@@ -212,10 +221,11 @@ public class ChatFragment extends Fragment {
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-
+                        // 에러 처리
                     }
                 });
             }
+
             // 읽지 않은 메시지가 있는지 확인
             if (unreadCountMap.containsKey(keys.get(position))) {
                 int unreadCount = unreadCountMap.get(keys.get(position));
@@ -224,16 +234,17 @@ public class ChatFragment extends Fragment {
             } else {
                 customViewHolder.textView_unread_count.setVisibility(View.GONE);
             }
+
             // 단체 채팅방 이름 변경을 위한 코드
             String chatroomKey = keys.get(position);
-            FirebaseDatabase.getInstance().getReference().child("chatrooms").child(chatroomKey).child("roomTitle")
+            FirebaseDatabase.getInstance().getReference().child("chatrooms").child(chatroomKey).child("roomName")
                     .addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             if (dataSnapshot.exists()) {
-                                String roomTitle = dataSnapshot.getValue(String.class);
+                                String roomName = dataSnapshot.getValue(String.class);
                                 // 방 이름을 UI에 업데이트
-                                customViewHolder.textView_title.setText(roomTitle);
+                                customViewHolder.textView_title.setText(roomName);
                             } else {
                                 // 방 이름이 없으면 기본적으로 사용자 이름 표시
                                 setDefaultTitle(customViewHolder, position);
@@ -246,7 +257,6 @@ public class ChatFragment extends Fragment {
                             setDefaultTitle(customViewHolder, position);
                         }
                     });
-
 
             Map<String, ChatModel.Comment> commentMap = new TreeMap<>(Collections.reverseOrder());
             commentMap.putAll(chatModels.get(position).comments);
@@ -286,8 +296,8 @@ public class ChatFragment extends Fragment {
                     }
                 }
             });
-
         }
+
 
         public void deleteChatRoom(int position) {
             String key = keys.get(position);

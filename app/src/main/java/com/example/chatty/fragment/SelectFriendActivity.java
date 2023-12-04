@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -49,6 +50,9 @@ public class SelectFriendActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
                 chatModel.users.put(myUid, true);
+
+                EditText roomNameEditText = findViewById(R.id.roomname);
+                chatModel.roomName = roomNameEditText.getText().toString();
 
                 // chatModel을 사용하여 chatrooms에 데이터를 추가한 후, 생성된 채팅방의 키를 가져옴
                 String chatRoomKey = FirebaseDatabase.getInstance().getReference().child("chatrooms").push().getKey();
