@@ -14,14 +14,6 @@
         android:scaleType="centerCrop"
         android:src="@drawable/back_title" />
 
-    <View
-        android:id="@+id/lineAboveEditText"
-        android:layout_width="match_parent"
-        android:layout_height="3dp"
-        android:layout_below="@+id/groupMessageActivity_editText"
-        android:layout_marginTop="-45dp"
-        android:background="#BFBFBF" />
-
 
     <EditText
         android:id="@+id/groupMessageActivity_editText"

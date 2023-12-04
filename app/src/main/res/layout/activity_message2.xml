@@ -28,14 +28,6 @@
         android:layout_marginEnd="-1dp"
         android:layout_marginRight="-1dp"></androidx.recyclerview.widget.RecyclerView>
 
-    <View
-        android:id="@+id/lineAboveEditText"
-        android:layout_width="match_parent"
-        android:layout_height="3dp"
-        android:layout_below="@+id/messageActivity_editText"
-        android:layout_marginTop="-49dp"
-        android:background="#BFBFBF" />
-
     <EditText
         android:id="@+id/messageActivity_editText"
         android:layout_width="wrap_content"
