@@ -1,4 +1,5 @@
 package com.example.chatty.fragment;
+
 import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
 import android.content.DialogInterface;
@@ -29,6 +30,7 @@ import com.example.chatty.chat.GroupMessageActivity;
 import com.example.chatty.chat.MessageActivity;
 import com.example.chatty.model.ChatModel;
 import com.example.chatty.model.UserModel;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -105,6 +107,14 @@ public class ChatFragment extends Fragment {
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
         itemTouchHelper.attachToRecyclerView(recyclerView);
 
+        // 채팅 버튼 클릭 시 이벤트 처리
+        FloatingActionButton floatingActionButton = view.findViewById(R.id.chatfragment_floatingButton2); // 수정된 부분
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(view.getContext(), SelectFriendActivity.class));
+            }
+        });
         return view;
     }
 
@@ -135,7 +145,6 @@ public class ChatFragment extends Fragment {
                         }
                     });
         }
-
 
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -198,11 +207,11 @@ public class ChatFragment extends Fragment {
 
                     if (chatModels.get(adapterPosition).users.size() > 2) {
                         intent = new Intent(view.getContext(), GroupMessageActivity.class);
-                        intent.putExtra("destinationRoom",keys.get(position));
+                        intent.putExtra("destinationRoom", keys.get(position));
                     } else {
                         intent = new Intent(view.getContext(), MessageActivity.class);
                         intent.putExtra("destinationUid", destinationUsers.get(adapterPosition));
-                        intent.putExtra("destinationUid",destinationUsers.get(position));
+                        intent.putExtra("destinationUid", destinationUsers.get(position));
                     }
 
                     ActivityOptions activityOptions = null;
@@ -213,6 +222,7 @@ public class ChatFragment extends Fragment {
                 }
             });
         }
+
         public void deleteChatRoom(int position) {
             String key = keys.get(position);
 

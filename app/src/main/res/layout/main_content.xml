@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="58dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/main_title" />
+
+
+    <ImageView
+        android:layout_width="358dp"
+        android:layout_height="535dp"
+        android:layout_gravity="center"
+        android:scaleType="centerCrop"
+
+        android:src="@drawable/main_content" />
+
+    <Button
+        android:id="@+id/start_chat"
+        android:layout_width="236dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:text="채팅 시작하기"
+        android:onClick="addFriend"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:backgroundTint="@color/blue"
+        android:background="@drawable/rounded_button"
+        android:textStyle="bold"/>
+
+</LinearLayout>
+

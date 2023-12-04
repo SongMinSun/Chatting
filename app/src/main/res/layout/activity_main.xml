@@ -5,19 +5,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
     <FrameLayout
         android:id="@+id/mainactivity_framelayout"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_above="@+id/mainactivity_bottomnavigationview"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"></FrameLayout>
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/mainactivity_bottomnavigationview"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginBottom="-1dp"></FrameLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/mainactivity_bottomnavigationview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/mainactivity_bottomnavigationview"
         android:layout_alignParentBottom="true"
         app:itemBackground="@color/yellow"
         app:itemIconTint="@android:color/white"

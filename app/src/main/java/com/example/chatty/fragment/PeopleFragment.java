@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.chatty.AddFriendActivity;
+import com.example.chatty.MainContentActivity;
 import com.example.chatty.R;
 import com.example.chatty.model.UserModel;
 import com.example.chatty.chat.MessageActivity;
@@ -106,12 +107,22 @@ public class PeopleFragment extends Fragment {
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
         itemTouchHelper.attachToRecyclerView(recyclerView);
 
+
+        FloatingActionButton floatingActionButton2 = view.findViewById(R.id.question_button);
+        floatingActionButton2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(view.getContext(), MainContentActivity.class));
+            }
+        });
+
         FloatingActionButton floatingActionButton = view.findViewById(R.id.peoplefragment_floatingButton);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(view.getContext(), AddFriendActivity.class));
             }
+
         });
 
         loadCurrentUserProfile();

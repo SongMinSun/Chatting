@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
     <ImageView
         android:layout_width="match_parent"
@@ -33,11 +34,11 @@
             android:id="@+id/profile_status"
             android:layout_width="wrap_content"
             android:layout_height="60dp"
-            android:layout_marginStart="200dp"
+            android:layout_marginStart="120dp"
+            android:layout_marginTop="20dp"
             android:layout_toEndOf="@id/profile_imageview"
             android:textSize="16dp"
-            android:textStyle="bold"
-            android:layout_marginTop="20dp"/>
+            android:textStyle="bold" />
     </RelativeLayout>
 
     <!-- 사용자명 텍스트뷰 -->
@@ -67,21 +68,48 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:layout_marginTop="4dp"/>
-
-    <!-- 친구추가 버튼 -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/peoplefragment_floatingButton"
-        android:layout_width="wrap_content"
+    <!-- 리니어 레이아웃 추가 -->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="20dp"
-        android:layout_gravity="right"
-        android:backgroundTint="@color/blue"
-        app:srcCompat="@drawable/plus_people"
-        app:fabSize="normal"
-        tools:ignore="SpeakableTextPresentCheck" />
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp">
+
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/question_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="left"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="10dp"
+            android:backgroundTint="#515151"
+            app:fabSize="normal"
+            app:srcCompat="@drawable/question"
+            tools:ignore="SpeakableTextPresentCheck" />
+
+
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/peoplefragment_floatingButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="230dp"
+            android:layout_marginTop="20dp"
+
+            android:layout_marginBottom="10dp"
+            android:layout_gravity="right"
+            android:backgroundTint="@color/blue"
+            android:src="@drawable/plus_people"
+            app:fabSize="normal"
+            tools:ignore="SpeakableTextPresentCheck" />
+
+    </LinearLayout>
+
 </LinearLayout>
