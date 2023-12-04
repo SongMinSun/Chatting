@@ -15,8 +15,8 @@
 
 
     <ImageView
-        android:layout_width="358dp"
-        android:layout_height="535dp"
+        android:layout_width="wrap_content"
+        android:layout_height="556dp"
         android:layout_gravity="center"
         android:scaleType="centerCrop"
 
@@ -33,6 +33,7 @@
         android:onClick="addFriend"
         android:textColor="@color/white"
         android:textSize="20sp"
+        android:layout_marginTop="15dp"
         android:backgroundTint="@color/blue"
         android:background="@drawable/rounded_button"
         android:textStyle="bold"/>
